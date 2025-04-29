@@ -16,6 +16,12 @@ teedy-importer-macos
 teedy-importer-win.exe
 docs/*
 !docs/.gitkeep
+<<<<<<< Updated upstream
 
+=======
+/data/
+/target/
+>>>>>>> Stashed changes
 #macos
 .DS_Store
+data/docs/log/docs.log

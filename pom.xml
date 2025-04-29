@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<!--  <name>Teedy</name> &lt;!&ndash; 项目名称 &ndash;&gt;-->
+<!--  <description>Teedy项目描述</description> &lt;!&ndash; 项目描述 &ndash;&gt;-->
+<!--  <url>https://www.example.com/teedy</url> &lt;!&ndash; 项目网址 &ndash;&gt;-->
+<!--  <licenses>-->
+<!--    <license>-->
+<!--      <name>MIT License</name>-->
+<!--      <url>https://opensource.org/licenses/MIT</url>-->
+<!--      <distribution>repo</distribution>-->
+<!--    </license>-->
+<!--  </licenses>-->
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.sismics.docs</groupId>
@@ -116,8 +126,172 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${org.eclipse.jetty.jetty-maven-plugin.version}</version>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.9.1</version> <!-- 你可以根据需要选择合适的版本 -->
+        <configuration>
+          <!-- 配置项，例如生成报告时排除某些内容等 -->
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <dependencies>false</dependencies>
+          <modules>false</modules>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.18.0</version>
+        <configuration>
+          <failOnViolation>false</failOnViolation>
+        <!-- printFailingErrors is pretty useful -->
+        <printFailingErrors>true</printFailingErrors>
+        </configuration>
+        <executions>  <!-- ✅ executions 必须放在 build/plugins 里面 -->
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.9</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+            <!-- attached to Maven test phase -->
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.6.3</version>
+        <configuration>
+          <failOnError>false</failOnError>
+        </configuration>
+        <executions>
+          <execution>
+            <id>aggregate</id>
+            <goals>
+              <goal>aggregate</goal>
+            </goals>
+            <phase>site</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+
+
+
     </plugins>
+
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.18.0</version>
+        <configuration>
+          <rulesets>
+            <ruleset>custom_pmd_ruleset.xml</ruleset>
+          </rulesets>
+        </configuration>
+        <reportSets>  <!-- ✅ reportSets 应该放这里 -->
+          <reportSet>
+            <reports>
+              <report>pmd</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>3.0.0</version>
+        <reportSets>
+          <reportSet>
+            <id>aggregate</id>
+            <inherited>false</inherited>
+            <reports>
+              <report>report</report>
+            </reports>
+            <configuration>
+              <aggregate>true</aggregate>
+            </configuration>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.9</version>
+        <reportSets>
+          <reportSet>
+            <id>aggregate</id>
+            <inherited>false</inherited>
+            <reports>
+              <report>report-aggregate</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.6.3</version>
+        <configuration>
+          <failOnError>false</failOnError>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <id>aggregate</id>
+            <inherited>false</inherited>
+            <reports>
+              <report>aggregate</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>default</id>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+
+    </plugins>
+  </reporting>
+
+
+
 
   <modules>
     <module>docs-core</module>
@@ -488,7 +662,21 @@
         <version>${com.levigo.jbig2.levigo-jbig2-imageio.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>5.7.1</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
+
+  <distributionManagement>
+    <site>
+      <id>local-staging</id>
+      <url>file://${project.build.directory}/staging</url>
+    </site>
+  </distributionManagement>
+
 
 </project>
