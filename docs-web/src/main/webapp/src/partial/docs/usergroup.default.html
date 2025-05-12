@@ -1,2 +1,231 @@
-<h1>{{ 'usergroup.default.title' | translate }}</h1>
-<p>{{ 'usergroup.default.message' | translate }}</p>
+<div class="chat-container" ng-controller="UserGroupDefaultChatCtrl">
+    <div class="row" style="height: 100%;">
+        <div class="col-md-3 user-list-pane">
+            <h4>在线用户</h4>
+            <input type="text" class="form-control input-sm" placeholder="搜索用户..." ng-model="userSearchText" style="margin-bottom: 10px;">
+            <ul class="list-group user-list">
+                <li class="list-group-item"
+                    ng-repeat="user in availableUsers | filter:userSearchText"
+                    ng-click="selectUserToChat(user)"
+                    ng-class="{'active': selectedUserToChatWith.username === user.username}">
+                    <span class="fas fa-user" style="margin-right: 8px;"></span>
+                    {{ user.displayName || user.username }}
+                    <span class="badge pull-right" ng-if="user.unreadMessages > 0">{{ user.unreadMessages }}</span>
+                </li>
+                <li ng-if="!(availableUsers | filter:userSearchText).length" class="list-group-item text-muted">
+                    没有找到用户
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-md-9 chat-area-pane">
+            <div ng-if="!selectedUserToChatWith" class="no-chat-selected">
+                <p class="text-muted"><span class="fas fa-comments" style="font-size: 48px; margin-bottom: 15px;"></span><br>请从左侧选择一个用户开始聊天。</p>
+            </div>
+
+            <div ng-if="selectedUserToChatWith">
+                <div class="chat-header">
+                    <h4>与 {{ selectedUserToChatWith.displayName || selectedUserToChatWith.username }} 聊天中</h4>
+                </div>
+
+                <div class="chat-messages" id="chatMessagesArea">
+                     <div ng-if="isLoadingHistory" class="text-center text-muted" style="padding: 20px;">
+                        <span class="fas fa-spinner fa-spin"></span> 正在加载历史记录...
+                     </div>
+                     <div ng-if="!isLoadingHistory" ng-repeat="message in messages[selectedUserToChatWith.username] track by message.id || $index"
+                         class="message-bubble"
+                         ng-class="{'sent': message.sender === loggedInUsername, 'received': message.sender !== loggedInUsername, 'error': message.isError, 'sending': message.isSending}">
+                         <div class="message-content">
+                            <p>{{ message.text }}</p>
+                            <small class="text-muted timestamp">
+                                {{ message.timestamp | date:'HH:mm' }}
+                                <span ng-if="message.isSending" class="fas fa-clock sending-indicator" title="发送中..."></span>
+                                <span ng-if="message.isError" class="fas fa-exclamation-triangle error-indicator" title="{{ message.errorText || '发送失败' }}"></span>
+                            </small>
+                        </div>
+                    </div>
+                    <div ng-if="!isLoadingHistory && (!messages[selectedUserToChatWith.username] || messages[selectedUserToChatWith.username].length === 0)" class="text-muted text-center" style="padding-top: 20px;">
+                        开始你们的对话吧！
+                    </div>
+                </div>
+
+                <div class="chat-input">
+                    <div ng-if="sendError" class="alert alert-danger alert-sm" style="margin-bottom: 5px; padding: 5px 10px;">
+                       {{ sendError }}
+                    </div>
+                    <form ng-submit="sendMessage()">
+                        <div class="input-group">
+                            <input type="text" class="form-control"
+                                   ng-model="chatInput.text"  
+                                   placeholder="输入消息..."
+                                   autocomplete="off"
+                                   required>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" type="submit"
+                                        ng-disabled="!chatInput.text || !selectedUserToChatWith"> 
+                                    <span class="fas fa-paper-plane"></span> 发送
+                                </button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div> </div> </div> </div> <style>
+.chat-container {
+  height: calc(100vh - 120px); /* 根据您的页眉页脚调整 */
+  overflow: hidden; /* 防止整个容器滚动 */
+  font-size: 14px;
+}
+
+.user-list-pane {
+  height: 100%;
+  overflow-y: auto;
+  border-right: 1px solid #eee;
+  padding: 15px;
+  background-color: #f9f9f9;
+}
+
+.user-list .list-group-item {
+  cursor: pointer;
+  border-radius: 4px;
+  margin-bottom: 5px;
+  font-size: 13px;
+}
+
+.user-list .list-group-item:hover {
+  background-color: #e9e9e9;
+}
+
+.user-list .list-group-item.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.user-list .list-group-item.active .badge {
+  background-color: white;
+  color: #007bff;
+}
+
+.chat-area-pane {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0; /* chat-area-pane 通常不需要内边距，子元素会有 */
+}
+
+.chat-header {
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+  background-color: #f8f9fa;
+  flex-shrink: 0; /* 防止头部被压缩 */
+}
+
+.chat-header h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.chat-messages {
+  flex-grow: 1; /* 占据所有剩余空间 */
+  overflow-y: auto; /* 内容超出时显示垂直滚动条 */
+  padding: 15px;
+  background-color: #fff;
+  min-height: 0; /* !!! 非常重要：确保 flex item 能正确收缩以允许 flex-grow !!! */
+}
+
+.message-bubble {
+  margin-bottom: 15px;
+  padding: 0;
+  max-width: 75%;
+  clear: both;
+  display: flex;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.message-bubble .message-content {
+  padding: 8px 12px;
+  border-radius: 18px;
+  position: relative; /* 用于可能的角标或菜单 */
+}
+
+.message-bubble .message-content p {
+  margin: 0 0 3px 0;
+  word-wrap: break-word; /* 长单词换行 */
+}
+
+.message-bubble .timestamp {
+  font-size: 0.75em;
+  color: #999;
+  display: inline-block; /* 使 margin-left 生效 */
+  margin-left: 5px;
+}
+
+.message-bubble.sent {
+  margin-left: auto; /* 推动到右边 */
+  flex-direction: row-reverse; /* 如果头像和内容顺序需要反转 */
+}
+
+.message-bubble.sent .message-content {
+  background-color: #007bff;
+  color: white;
+  border-bottom-right-radius: 5px; /* 小三角效果 */
+}
+
+.message-bubble.sent .timestamp {
+  color: #e0e0e0; /* 在深色背景上使用浅色时间戳 */
+}
+
+.message-bubble.received {
+  margin-right: auto; /* 推动到左边 */
+  /* flex-direction: row; (默认) */
+}
+
+.message-bubble.received .message-content {
+  background-color: #e9ecef;
+  color: #333;
+  border-bottom-left-radius: 5px; /* 小三角效果 */
+}
+
+.message-bubble.sending {
+  opacity: 0.7; /* 发送中消息的视觉反馈 */
+}
+
+.message-bubble.error .message-content {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb; /* 错误消息的视觉反馈 */
+}
+
+.message-bubble .sending-indicator,
+.message-bubble .error-indicator {
+  font-size: 0.9em;
+  margin-left: 4px;
+  vertical-align: middle; /* 对齐图标和时间戳 */
+}
+
+.message-bubble .error-indicator {
+  color: #dc3545;
+}
+
+.chat-input {
+  padding: 10px 15px;
+  border-top: 1px solid #eee;
+  background-color: #f8f9fa;
+  flex-shrink: 0; /* 防止输入区域被压缩 */
+}
+
+.no-chat-selected {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+}
+
+.alert-sm {
+  font-size: 12px;
+}
+</style>
