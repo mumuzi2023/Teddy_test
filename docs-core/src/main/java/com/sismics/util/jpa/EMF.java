@@ -101,7 +101,7 @@ public final class EMF {
             props.put("hibernate.connection.username", databaseUsername);
             props.put("hibernate.connection.password", databasePassword);
         }
-        props.put("hibernate.hbm2ddl.auto", "");
+        props.put("hibernate.hbm2ddl.auto", "update");
         props.put("hibernate.show_sql", "false");
         props.put("hibernate.format_sql", "false");
         props.put("hibernate.max_fetch_depth", "5");
