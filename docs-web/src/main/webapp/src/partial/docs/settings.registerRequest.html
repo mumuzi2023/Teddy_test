@@ -1,0 +1,54 @@
+<div>
+    <h2 translate="settings.registrations.title"></h2>
+    <p translate="settings.registrations.description" class="mb-3"></p>
+  
+    <div ng-if="loading" class="text-center my-3">
+      <span class="fas fa-spinner fa-spin fa-2x"></span>
+      <p>{{ 'settings.registrations.loading' | translate }}</p>
+    </div>
+  
+    <div ng-if="!loading && loadError" class="alert alert-danger">
+      <strong translate="settings.registrations.error_loading_title"></strong> {{ loadErrorMessage }}
+    </div>
+  
+    <div ng-if="!loading && !loadError && registrations.length === 0" class="alert alert-info">
+      {{ 'settings.registrations.no_registrations' | translate }}
+    </div>
+  
+    <table class="table table-hover" ng-if="!loading && !loadError && registrations.length > 0">
+      <thead>
+        <tr>
+          <th>{{ 'settings.registrations.header_username' | translate }}</th>
+          <th>{{ 'settings.registrations.header_email' | translate }}</th>
+          <th>{{ 'settings.registrations.header_status' | translate }}</th>
+          <th class="text-right">{{ 'settings.registrations.header_actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="reg in registrations track by reg.id" ng-class="{'table-success text-success': reg.confirmed, 'font-weight-normal': !reg.confirmed}">
+          <td>{{ reg.username }}</td>
+          <td>{{ reg.email }}</td>
+          <td>
+            <span ng-if="reg.confirmed" class="badge badge-success">{{ 'settings.registrations.status_confirmed' | translate }}</span>
+            <span ng-if="!reg.confirmed" class="badge badge-warning">{{ 'settings.registrations.status_pending' | translate }}</span>
+          </td>
+          <td class="text-right">
+            <button class="btn btn-success btn-sm mr-1"
+                    ng-click="confirmRegistration(reg)"
+                    ng-disabled="reg.confirmed || reg.isProcessing"
+                    title="{{ 'settings.registrations.action_allow' | translate }}">
+              <span ng-if="!reg.isProcessingConfirm"><i class="fas fa-check"></i> {{ 'settings.registrations.action_allow_short' | translate }}</span>
+              <span ng-if="reg.isProcessingConfirm"><i class="fas fa-spinner fa-spin"></i></span>
+            </button>
+            <button class="btn btn-danger btn-sm"
+                    ng-click="rejectRegistration(reg)"
+                    ng-disabled="reg.isProcessing"
+                    title="{{ 'settings.registrations.action_reject' | translate }}">
+              <span ng-if="!reg.isProcessingReject"><i class="fas fa-times"></i> {{ 'settings.registrations.action_reject_short' | translate }}</span>
+              <span ng-if="reg.isProcessingReject"><i class="fas fa-spinner fa-spin"></i></span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>

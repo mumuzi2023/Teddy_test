@@ -392,6 +392,19 @@ angular.module('docs',
         }
       }
     })
+    .state('settings.registerRequest', {
+      url: '/registerRequest', // This URL will be targeted by the menu item
+      views: {
+        'settings': { // This targets the ui-view="settings" inside your main settings.html
+          templateUrl: 'partial/docs/settings.registerRequest.html',
+          controller: 'SettingsRegisterRequestController' // Corrected controller name
+        }
+      },
+      data: {
+        // pageTitle: 'Registration Management', // Example, integrate with your title service
+        isAdmin: true // Assuming this is an admin-only section
+      }
+    })
     .state('group', {
       url: '/group',
       abstract: true,
