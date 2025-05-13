@@ -1,0 +1,31 @@
+<div class="modal-header">
+  <h3 class="modal-title" id="modal-title">{{ 'login.register_request_modal.title' | translate }}</h3>
+</div>
+<div class="modal-body" id="modal-body">
+  <form name="registerRequestForm" novalidate>
+    <div class="form-group" ng-class="{'has-error': registerRequestForm.username.$invalid && (registerRequestForm.username.$dirty || submitted)}">
+      <label for="regUsername">{{ 'login.register_request_modal.username' | translate }}</label>
+      <input type="text" class="form-control" id="regUsername" name="username"
+             placeholder="{{ 'login.register_request_modal.username_placeholder' | translate }}"
+             ng-model="request.username" required ng-minlength="3">
+      <p ng-show="registerRequestForm.username.$error.required && (registerRequestForm.username.$dirty || submitted)" class="help-block">{{ 'validation.required' | translate }}</p>
+      <p ng-show="registerRequestForm.username.$error.minlength && (registerRequestForm.username.$dirty || submitted)" class="help-block">{{ 'validation.minlength' | translate: {min: 3} }}</p>
+    </div>
+    <div class="form-group" ng-class="{'has-error': registerRequestForm.email.$invalid && (registerRequestForm.email.$dirty || submitted)}">
+      <label for="regEmail">{{ 'login.register_request_modal.email' | translate }}</label>
+      <input type="email" class="form-control" id="regEmail" name="email"
+             placeholder="{{ 'login.register_request_modal.email_placeholder' | translate }}"
+             ng-model="request.email" required>
+      <p ng-show="registerRequestForm.email.$error.required && (registerRequestForm.email.$dirty || submitted)" class="help-block">{{ 'validation.required' | translate }}</p>
+      <p ng-show="registerRequestForm.email.$error.email && (registerRequestForm.email.$dirty || submitted)" class="help-block">{{ 'validation.email_invalid' | translate }}</p>
+    </div>
+  </form>
+  <div ng-if="modalErrorMessage" class="alert alert-danger" style="margin-top: 15px;">{{ modalErrorMessage }}</div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" type="button" ng-click="submitForm(request)" ng-disabled="registerRequestForm.$invalid || submitting">
+    <span ng-if="!submitting">{{ 'login.register_request_modal.submit' | translate }}</span>
+    <span ng-if="submitting"><i class="fas fa-spinner fa-spin"></i> {{ 'login.register_request_modal.submitting' | translate }}</span>
+  </button>
+  <button class="btn btn-warning" type="button" ng-click="cancel()">{{ 'login.register_request_modal.cancel' | translate }}</button>
+</div>

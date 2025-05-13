@@ -78,15 +78,7 @@ public class RegisterResource extends BaseResource { // Assuming BaseResource ex
                 .add("email", registration.getEmail() != null ? registration.getEmail() : "");
         // For boolean, directly add it.
 
-        User user = new User();
-        user.setUsername(registration.getUsername());
-        user.setEmail(registration.getEmail());
-        user.setPassword(registration.getUsername()); // 初始密码 or 发送邮件提醒修改
-        user.setRoleId(Constants.DEFAULT_USER_ROLE);
-        user.setStorageQuota(100000000L); // 默认配额
-
-        UserDao userDao = new UserDao();
-        try{userDao.create(user,registration.getId());}catch(Exception e){}
+        
         builder.add("confirmed", registration.isConfirmed());
         return builder.build();
     }
@@ -188,15 +180,25 @@ public class RegisterResource extends BaseResource { // Assuming BaseResource ex
      * @return Response containing the updated registration object or 404 if not found.
      */
     @PUT // Using PUT for idempotent state change
-    @Path("/{id}/confirm")
+    @Path("/{id}/{username}/{email}/confirm")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response confirmRegistration(@PathParam("id") String id) {
+    public Response confirmRegistration(@PathParam("id") String id,@PathParam("username") String username,
+            @PathParam("email") String email) {
         if (id == null || id.trim().isEmpty()) {
             throw new BadRequestException("Registration ID path parameter is required.");
         }
 
         RegisterDao registerDao = new RegisterDao();
         Register updatedRegistration;
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(username); // 初始密码 or 发送邮件提醒修改
+        user.setRoleId(Constants.DEFAULT_USER_ROLE);
+        user.setStorageQuota(100000000L); // 默认配额
+
+        UserDao userDao = new UserDao();
+        try{userDao.create(user,id);}catch(Exception e){}
         try {
             updatedRegistration = registerDao.confirmRegistrationById(id);
         } catch (Exception e) {

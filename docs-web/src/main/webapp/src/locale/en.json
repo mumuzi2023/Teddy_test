@@ -1,5 +1,19 @@
 {
-  "login": {
+  "login": {"register_request_modal": {
+      "title": "Request Registration",
+      "username": "Desired Username",
+      "username_placeholder": "Enter your desired username",
+      "email": "Your Email",
+      "email_placeholder": "Enter your email address",
+      "submit": "Submit Request",
+      "submitting": "Submitting...",
+      "cancel": "Cancel"
+    },
+    "register_request_success_title": "Request submitted",
+    "register_request_success_message": "Your username '{{username}}' have successfully submitted",
+    "register_request_error_title": "Request failed.",
+    "register_request_error_message": "Fail to request, please submit later.",
+    "register_request_error_status_message": "Error  ({{status}} - {{text}})",
     "username": "Username",
     "password": "Password",
     "validation_code_required": "A validation code is required",

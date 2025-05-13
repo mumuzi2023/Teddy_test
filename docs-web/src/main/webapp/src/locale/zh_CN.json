@@ -1,5 +1,15 @@
 {
   "login": {
+    "register_request_modal": {
+      "title": "申请注册账号",
+      "username": "期望用户名",
+      "username_placeholder": "请输入您期望的用户名",
+      "email": "您的邮箱",
+      "email_placeholder": "请输入您的邮箱地址",
+      "submit": "提交申请",
+      "submitting": "正在提交...",
+      "cancel": "取消"
+    },
     "username": "用户名",
     "password": "密码",
     "validation_code_required": "请输入验证码",
@@ -15,8 +25,22 @@
     "password_lost_sent_title": "密码重置邮件已发送",
     "password_lost_sent_message": "重置密码的邮件已经发送至<strong>{{ username }}</strong>",
     "password_lost_error_title": "密码重置出错",
-    "password_lost_error_message": "无法发送密码重置邮件，请联系您的管理员进行手动重置"
-  },
+    "password_lost_error_message": "无法发送密码重置邮件，请联系您的管理员进行手动重置",
+    "request_registration_btn": "申请注册",
+    "register_request_modal": {
+      "title": "申请注册账号",
+      "username": "期望用户名",
+      "username_placeholder": "请输入您期望的用户名",
+      "email": "您的邮箱",
+      "email_placeholder": "请输入您的邮箱地址",
+      "submit": "提交申请",
+      "submitting": "正在提交...",
+      "cancel": "取消"
+  },"register_request_success_title": "申请已提交",
+    "register_request_success_message": "您的用户名 '{{username}}' 的注册申请已成功提交。请等待管理员审核。",
+    "register_request_error_title": "申请失败",
+    "register_request_error_message": "无法提交您的注册申请。请稍后再试。",
+    "register_request_error_status_message": "发生错误 ({{status}} - {{text}})。请重试。",
   "passwordlost": {
     "title": "丢失密码",
     "message": "请输入您的用户名用于获取密码重置链接。如您忘记了您的用户名，请联系您的管理员",
@@ -505,7 +529,9 @@
     "email": "必须是一个有效邮箱地址",
     "password_confirm": "密码和确认密码必须完全一致",
     "number": "必须为数字",
-    "no_space": "不允许空格"
+    "no_space": "不允许空格",
+     "minlength": "请输入至少 {{min}} 个字符。",
+    "email_invalid": "请输入一个有效的邮箱地址。"
   },
   "pagination": {
     "previous": "上一个",

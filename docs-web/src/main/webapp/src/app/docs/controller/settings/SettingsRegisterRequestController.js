@@ -42,8 +42,11 @@ angular.module('docs')
       }
       registration.isProcessing = true;
       registration.isProcessingConfirm = true;
-
-      $http.put('../api/register/' + registration.id + '/confirm')
+      var postData = {
+        username: registration.username,
+        email: registration.email
+      };
+      $http.put('../api/register/' + registration.id + '/'+encodeURIComponent(registration.username)+'/'+encodeURIComponent(registration.email)+'/confirm')
         .then(function(response) {
           // Update the specific registration in the list with data from server
           var index = $scope.registrations.findIndex(r => r.id === registration.id);
